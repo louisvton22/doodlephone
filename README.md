@@ -76,5 +76,5 @@ This repeats for as many drawers there are in the game
 | /pictures                | POST               | Add a drawing to a player's respective team and update the latest picture in the game document     |
 | "nextTurn"               | websockets         | Notifies the next drawer up for their team, calls to /pictures will be made                        |
 | "startGame"              | websockets         | Starts the game for each player and their client should change to the game                         |
-| "guess"                  | emit               | Notifies guessers that it's their time to guess the picture their team drew                        |
+| "guess"                  | websockets               | Notifies guessers that it's their time to guess the picture their team drew                        |
 | "updateTeams"            | websockets         | Updates the lobby to reflect the latest team change by a player on all client screens.             |
