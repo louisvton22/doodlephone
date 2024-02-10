@@ -60,7 +60,7 @@ This repeats for as many drawers there are in the game
 | P3       | Drawer  | I want access to a drawing tool bar                        | Import library with painting assets with notably changing brush color and size                                                                                                                       |
 | P0       | Guesser | I want to guess the picture                                | Receive websocket broadcast that it's time for the guesser to guess the prompt. Make GET request to the current game document and retrieve the prompt field.                                         |
 | P3       | Player  | I want to sabotage the other team so we may perform better | Send websocket broadcast to current drawers in a game round and sabotager may draw an image that would get transposed onto the other team's canvas or limit tools in toolbar by hiding it from view. |
-]
+
 
 ## Endpoints
 
