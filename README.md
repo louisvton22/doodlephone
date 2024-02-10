@@ -18,7 +18,7 @@ Our reason for making a game like this is that it sounds like a fun game while b
 > We’re not too familiar with websockets yet, but from our understanding, we’ll be using its active connection with the server to broadcast events so that certain clients have different views whether they’re guessing, drawing, or waiting
 
 1. User enters username
-    * User domain object created via RESTful APIendpoint
+    * User domain object created via RESTful API endpoint
     * Game domain object is posted via REST API
     * Team domain object is posted via REST API
 
