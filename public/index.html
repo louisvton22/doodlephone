@@ -1,0 +1,41 @@
+<html>
+<header>
+    <link rel="stylesheet" href="./stylesheets/style.css">
+    <script src="./javascripts/index.js"></script>
+
+    <script>
+        const socketURL = "ws://localhost:3000/chatSocket"
+        let websocket = new WebSocket(socketURL)
+
+        function sendChat() {
+            let chatMsg = document.getElementById("chat-message").value
+            websocket.send(chatMsg)
+        }
+
+        websocket.onmessage = event => {
+            const msg = event.data;
+            document.getElementById("chats").innerText += msg + "\n"
+        }
+    </script>
+</header>
+<body>
+    <h1>Welcome to Doodlephone</h1>
+
+
+    <main>
+        <div class="lobby">
+            <div class="team"></div>
+            <div class="team"></div>
+        </div>
+        <div class="chat-container">
+            <h2>Chat</h2>
+            <div class="chats"></div>
+
+            <form>
+            <input type="text" placeholder="Write here" id="chat-message">
+            <button>Enter</button>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
