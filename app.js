@@ -17,21 +17,35 @@ enableWs(app,app.server);
 
 
 let socketCount = 1;
-let allSockets = [];
+let allSockets = {};
 
-app.ws('/chatSocket', (ws, res) => {
+app.ws('/chatSocket', (ws, req) => {
   let currSocketNum = socketCount;
   socketCount++;
-  allSockets.push(ws);
+  allSockets[currSocketNum] = {websocket: ws, name:req.query.name};
 
-  console.log("user " + currSocketNum + " connected.")
+  console.log("user " + allSockets[currSocketNum].name + " connected.")
 
+  // need to establish several events that we need to listen for throughout the game
   ws.on('message', msg => {
-    console.log(`msg from user ${currSocketNum}: ${msg}`)
+    let message = JSON.parse(msg);
+    console.log(`action type: ${message.event} from user ${allSockets[currSocketNum].name}`)
 
-    allSockets.forEach(s => {
-      s.send(currSocketNum + ": " + msg)
-    })
+    switch(message.event){
+      case ('chat'):
+        Object.keys(allSockets).forEach(sCount => {
+          // message structure: {event:"chat", data:"message"}
+          let data = {event:"chat", data: `${allSockets[currSocketNum].name} : ${message.message}`}
+          allSockets[sCount].websocket.send(JSON.stringify(data));
+        })
+        break;
+    }
+    
+  })
+
+  ws.on('close', (ws, req) => {
+    delete allSockets.currSocketNum
+    console.log(`closed socket : ${currSocketNum}`)
   })
 })
 

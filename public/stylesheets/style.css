@@ -35,3 +35,12 @@ main {
 .chats {
   min-height: 20%;
 }
+
+
+
+/* Teams */
+
+.team {
+  display:flex;
+  flex-direction: column;
+}
