@@ -54,3 +54,32 @@ main {
 .team h2, h3{
   padding: 1vh 2vw;
 }
+
+/* Overlay*/
+
+
+
+#popup-overlay {
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.685);
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 9998;
+  display: block;
+  overflow-y: hidden;
+  overflow-x: hidden;
+}
+
+#overlay {
+  display:flex;
+  flex-direction: column;
+  position: absolute;
+  top: 40%;
+  right: 45%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  z-index: 9999;
+}
