@@ -3,11 +3,32 @@ var router = express.Router();
 
 /* GET users listing. */
 
-let mostUpdatedLobby = ''
+let lastUpdate = new Date()
+let lobby = `<div class='team first'>
+              <h2>Team A</h2>
+              </div>
+              <button>Switch Sides</button>
+              <div class='team second '>
+              <h2>Team B</h2>
+              </div>`
+// client will send their updated lobby, if the date on this new lobby is more recent than the last update, all websockets should update
 router.get('/', function(req, res, next) {
+  console.log(lobby);
   res.type('html')
-  mostUpdatedLobby +=  `<div id=${req.query.name}><h3>${req.query.name}</h3><div>`
-  res.send(mostUpdatedLobby)
+  res.send(lobby)
 });
+
+router.post('/', (req,res,next) => {
+  try {
+    if (new Date(req.body.date) > lastUpdate) {
+      console.log("new date found")
+      lastUpdate = new Date(req.body.date);
+      lobby = req.body.lobby
+    }
+    res.json({status:"success"})
+  } catch(error) {
+      console.log(error)
+  }
+})
 
 export default router;

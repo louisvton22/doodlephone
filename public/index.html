@@ -5,21 +5,27 @@
 
 </header>
 <body>
-    <h1>Welcome to Doodlephone</h1>
+    <h1>Doodlephone</h1>
 
 
     <main>
         <div class="userForm">
-            <h2>Welcome to DoodlePhone!</h2>
             <p>Enter a display name:</p>
             <form onsubmit="establishConnection(event)">
                 <input id="nameInput" type="text" placeholder="">
                 <button type="submit">Submit</button>
             </form>
         </div>
-        <div class="lobby">
-            <div class="team first"></div>
-            <div class="team second "></div>
+        <div class="lobby-container">
+            <div class="lobby">
+            <div class="team first">
+                <h2>Team A</h2>
+            </div>
+            <button>Switch Sides</button>
+            <div class="team second ">
+                <h2>Team B</h2>
+            </div>
+            </div>
         </div>
         <div class="chat-container">
             <h2>Chat</h2>

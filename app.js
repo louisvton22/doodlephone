@@ -5,7 +5,7 @@ import logger from 'morgan';
 import http from 'http';
 import usersRouter from './routes/users.js';
 import { fileURLToPath } from 'url';
-
+import fetch from 'node-fetch'
 
 import enableWs from 'express-ws';
 var app = express();
@@ -27,18 +27,31 @@ app.ws('/chatSocket', (ws, req) => {
   console.log("user " + allSockets[currSocketNum].name + " connected.")
 
   // need to establish several events that we need to listen for throughout the game
-  ws.on('message', msg => {
+  ws.on('message', async (msg) => {
     let message = JSON.parse(msg);
     console.log(`action type: ${message.event} from user ${allSockets[currSocketNum].name}`)
 
     switch(message.event){
       case ('chat'):
-        Object.keys(allSockets).forEach(sCount => {
+       let data = {event:"chat", data: `${allSockets[currSocketNum].name} : ${message.message}`}
+       Object.keys(allSockets).forEach(sCount => {
           // message structure: {event:"chat", data:"message"}
-          let data = {event:"chat", data: `${allSockets[currSocketNum].name} : ${message.message}`}
+          
           allSockets[sCount].websocket.send(JSON.stringify(data));
         })
         break;
+      case ('updateLobby'):
+        let response = await fetch("http://localhost:3000/users")
+        let lobby = await response.text()
+        Object.keys(allSockets).forEach(sCount => {
+          // message structure: {event:"updateLobby", data: HTMLElement}
+          allSockets[sCount].websocket.send(JSON.stringify(
+            {
+              event: "updateLobby"
+            }));
+        })
+        break;
+      
     }
     
   })
@@ -57,8 +70,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/users', usersRouter);
 
+app.use('/users', usersRouter);
 app.set('view engine', 'jade')
 app.set('views', path.join(__dirname, 'views'))
 

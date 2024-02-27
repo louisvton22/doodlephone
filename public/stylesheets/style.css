@@ -16,9 +16,15 @@ main {
 
 /* Lobby Container*/
 .lobby {
+  display:flex;
+  justify-content: space-between;
   width: 50vw;
   height: 100%;
   background-color: antiquewhite;
+}
+
+.lobby button {
+  height: 10%;
 }
 
 
@@ -43,4 +49,8 @@ main {
 .team {
   display:flex;
   flex-direction: column;
+}
+
+.team h2, h3{
+  padding: 1vh 2vw;
 }
