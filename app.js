@@ -51,6 +51,15 @@ app.ws('/chatSocket', (ws, req) => {
             }));
         })
         break;
+      case('startGame'):
+        Object.keys(allSockets).forEach(sCount => {
+          // message structure: {event:"updateLobby", data: HTMLElement}
+            allSockets[sCount].websocket.send(JSON.stringify(
+              {
+                event: "startGame",
+              }));
+        })
+        break;
       
     }
     

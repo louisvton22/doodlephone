@@ -83,3 +83,7 @@ main {
   border-radius: 8px;
   z-index: 9999;
 }
+
+#canvas {
+  background-color: antiquewhite;
+}

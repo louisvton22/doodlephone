@@ -1,8 +1,8 @@
 <html>
 <header>
     <link rel="stylesheet" href="./stylesheets/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/510/fabric.min.js"></script>
     <script src="./javascripts/index.js"></script>
-
 </header>
 <body>
     <h1>Doodlephone</h1>
@@ -19,6 +19,11 @@
         <div id="popup-overlay"></div>
         <div class="lobby-container">
             <div class="lobby">
+            </div>
+            <div id="drawing-mode-options" style="">
+                <button id="clear-canvas" class="btn btn-info">Clear</button>
+                <label for="drawing-color">Line color:</label>
+                <input type="color" value="#000000" id="drawing-color"><br>
             </div>
         </div>
         <div class="chat-container">
