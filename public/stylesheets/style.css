@@ -13,6 +13,11 @@ main {
   gap: 10vw;
   height: 40vh;
 }
+.drawing-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 /* Lobby Container*/
 .lobby {
@@ -86,4 +91,14 @@ main {
 
 #canvas {
   background-color: antiquewhite;
+}
+
+#countdown {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+  width: 200px;
+  font-size: 50px;
+  /* background-color: red; */
 }
