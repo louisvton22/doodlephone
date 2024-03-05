@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 })
 
 window.addEventListener('beforeunload', async () => {
+    await endGame();
     await updateLobby();
 })
 
@@ -149,8 +150,43 @@ function getElementByClass(className) {
     return document.querySelector(className);
 }
 
-function broadcast(event, data) {
+async function broadcast(event, data) {
     console.log(`broadcasting ${event}`);
     let broadcastJSON = {event: event, ...data}
     websocket.send(JSON.stringify(broadcastJSON));
+
+    // call function to save user, team, and game data to database
+    if (event == "startGame") {
+        await postStartGameData();
+    }
+}
+                                         
+async function postStartGameData() {
+    let team1 = getElementByClass(".team.first h2").innerText
+    let team2 = getElementByClass(".team.second h2").innerText
+    let team1Players = Array.from(document.querySelectorAll(".team.first > div")).map((el) => el.innerText)
+    let team2Players = Array.from(document.querySelectorAll(".team.second > div")).map((el) => el.innerText)
+    let game = {
+        team1: {
+            name: team1,
+            players: team1Players
+        },
+        team2: {
+            name: team2,
+            players: team2Players
+        }
+    }
+    await fetch("http://localhost:3000/game", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(game)
+    })
+    console.log(game);
+
+}
+
+async function endGame() {
+    await fetch("http://localhost:3000/game/endGame");
 }

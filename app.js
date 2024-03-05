@@ -4,10 +4,12 @@ import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import http from 'http';
 import usersRouter from './routes/users.js';
+import gameRouter from './routes/game.js';
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch'
 
 import enableWs from 'express-ws';
+import models  from './models.js';
 var app = express();
 
 
@@ -84,10 +86,20 @@ app.use('/users', usersRouter);
 app.set('view engine', 'jade')
 app.set('views', path.join(__dirname, 'views'))
 
+app.use((req, res, next) => {
+  req.models = models;
+  next()
+})
+
+
+app.use("/game", gameRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
+
+
 
 // error handler
 app.use(function(err, req, res, next) {
