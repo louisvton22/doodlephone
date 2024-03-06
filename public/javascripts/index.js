@@ -13,7 +13,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 })
 
 window.addEventListener('beforeunload', async () => {
-    await endGame();
     await updateLobby();
 })
 
@@ -45,7 +44,7 @@ async function establishConnection(e) {
                     break;
                 case('startGame'):
                     console.log("starting game");
-                    startGame();
+                    startGame(jsonData.drawers.map((player) => player.name));
                     break;
                 case('updatePic'):
                     console.log("updating pic")
@@ -121,12 +120,16 @@ async function changeTeam() {
 }
 
 
-async function startGame() {
-    //broadcast start game event to all players  
+async function startGame(drawers) {
 
-    // remove lobby and add canvas
     let lobby = getElementByClass(".lobby");
     lobby.remove();
+    let statusMessage= document.createElement("h3");
+    // open canvas for current drawer
+    console.log(drawers);
+    if (drawers.slice(0,2).includes(displayName)) {
+    // remove lobby and add canvas
+    statusMessage.innerText = "You're up to draw!";
     let canvas = document.createElement("canvas");
     canvas.id = "canvas";
     let submit = document.createElement("button");
@@ -136,16 +139,7 @@ async function startGame() {
 
     let time = 20;
     const countdownEl = document.getElementById('countdown');
-    const intervalId = setInterval(() => {
-        time = time < 10 ? '0' + time : time;
-        countdownEl.innerHTML = `00:${time}`;
-        if (time == 0) {
-            clearInterval(intervalId); 
-            alert("Time's up!");
-        }
-        time--;
-    }, 1000);
-
+    
     getElementByClass(".lobby-container").append(timer,canvas,submit);
     const fabricCanvas = (window.canvas = new fabric.Canvas("canvas", {
         isDrawingMode: true
@@ -161,24 +155,23 @@ async function startGame() {
         console.log("color changed");
     };
     $("clear-canvas").onclick = () => fabricCanvas.clear();
-
-    let time = 5
-    setInterval(async function() {
-        timer.innerHTML = time
-        time--
+    const intervalId = setInterval(async () => {
+        time = time < 10 ? '0' + time : time;
+        countdownEl.innerHTML = `00:${time}`;
         if (time == 0) {
-            let response = await fetch("http://localhost:3000/game")
-            console.log(JSON.stringify(response.json()))
-            await fetch("http://localhost:3000/canvas", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({"currentPicture": JSON.stringify(fabricCanvas)})
-            })
-
+            clearInterval(intervalId); 
+            alert("Time's up!");
+            await submitDrawing(fabricCanvas);
         }
-    }, 1000)
+        time--;
+    }, 1000);
+
+    } else { // player is not the current drawer
+        statusMessage.innerText = "Hang tight, your teammate is drawing!";
+    }
+
+    getElementByClass(".drawing-container").prepend(statusMessage);
+
     
 }
 
@@ -199,12 +192,16 @@ function getElementByClass(className) {
 async function broadcast(event, data) {
     console.log(`broadcasting ${event}`);
     let broadcastJSON = {event: event, ...data}
+    if (event == "startGame") {
+        let drawerData = await postStartGameData();
+        drawerData = await drawerData.json();
+        console.log("drawer data: " + drawerData);
+        broadcastJSON = {...broadcastJSON, drawers: drawerData};
+    }
     websocket.send(JSON.stringify(broadcastJSON));
 
     // call function to save user, team, and game data to database
-    if (event == "startGame") {
-        await postStartGameData();
-    }
+    
 }
                                          
 async function postStartGameData() {
@@ -222,17 +219,31 @@ async function postStartGameData() {
             players: team2Players
         }
     }
-    await fetch("http://localhost:3000/game", {
+    let drawers = await fetch("http://localhost:3000/game", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(game)
     })
-    console.log(game);
+    console.log("Posting Game :" + JSON.stringify(game));
+    return drawers;
 
 }
 
 async function endGame() {
     await fetch("http://localhost:3000/game/endGame");
 }3
+
+async function submitDrawing(fabricCanvas) {
+    let response = await fetch("http://localhost:3000/game")
+            console.log(JSON.stringify(response.json()))
+            await fetch("http://localhost:3000/canvas", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"currentPicture": JSON.stringify(fabricCanvas)})
+            })
+    
+}

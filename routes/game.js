@@ -1,9 +1,13 @@
 import express from 'express';
-
+import fetch from 'node-fetch';
 var router = express.Router()
 
 router.post("/", async (req,res) => {
     try {
+        await req.models.Game.deleteMany({});
+        await req.models.User.deleteMany({});
+        await req.models.Team.deleteMany({});
+        await req.models.Picture.deleteMany({});
         Object.keys(req.body).forEach((team) => {
             let newTeam = new req.models.Team({
                 name: req.body[team].name
@@ -16,7 +20,7 @@ router.post("/", async (req,res) => {
             req.body.team2.players[Math.floor(Math.random() * req.body.team2.players.length)]
         ]   
         console.log(guessers)
-        players.forEach((player) => {
+        players.forEach(async (player) => {
             let newPlayer = new req.models.User({
                 name: player,
                 role: guessers.includes(player) ? "guesser" : "drawer"
@@ -33,16 +37,25 @@ router.post("/", async (req,res) => {
 
         })
         game.save()
+        let [team1, team2] = await req.models.Team.find()
+        console.log("Team 1" + team1);
+        console.log("Team 2" + team2);
+        let drawers = await req.models.User.find({role:"drawer"});
+        console.log("drawers " + drawers);
+        let team1Drawers = drawers.filter((drawer) => req.body.team1.players.includes(drawer.name));
+        let team2Drawers = drawers.filter((drawer) => req.body.team2.players.includes(drawer.name));
 
-        res.json({"status": "success"})
+        res.json({"status": "success", team1:team1Drawers, team2:team2Drawers});
     } catch(error) {
         console.log(error);
         res.status(500).json({"status":"error", error:error})
+
+        
     }
 })
 
 router.get('/', async (req, res) => {
-    let game = req.models.Game.find()
+    let game = await req.models.Game.find()
 
     res.json({
         "players": game.players,
