@@ -42,13 +42,15 @@ router.post("/", async (req,res) => {
         let [team1, team2] = await req.models.Team.find()
         console.log("Team 1" + team1);
         console.log("Team 2" + team2);
-        setTimeout(() => {}, 2000)
+        setTimeout(async () => {
         let drawers = await req.models.User.find({role:"drawer"});
         console.log("drawers " + drawers);
         let team1Drawers = drawers.filter((drawer) => req.body.team1.players.includes(drawer.name));
         let team2Drawers = drawers.filter((drawer) => req.body.team2.players.includes(drawer.name));
 
         res.json({"status": "success", team1:team1Drawers, team2:team2Drawers});
+        }, 2000)
+        
     } catch(error) {
         console.log(error);
         res.status(500).json({"status":"error", error:error})

@@ -20,7 +20,21 @@ const prompts = [
 "Guitar",
 "Sunflower",
 "Mountain",
-"Unicorn"
+"Unicorn",
+"Cat",
+"Bicycle",
+"Birthday Cake",
+"Swimming Pool",
+"Piano",
+"Snowman",
+"Rollercoaster",
+"Fireworks",
+'Telescope',
+'Picnic',
+'Bowling',
+'Giraffe',
+"Space Shuttle",
+"Hiking"
 ]
 
 const prompt = prompts[Math.floor(Math.random() * prompts.length)];
