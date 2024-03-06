@@ -27,7 +27,7 @@ router.post("/", async (req,res) => {
                 name: player,
                 role: guessers.includes(player) ? "guesser" : "drawer"
             })
-            newPlayer.save()
+            newPlayer.save();
         })
         let playersObjectsIds = await req.models.User.find({ name: { $in : players }})
         let guesserIds = await req.models.User.find({ name: { $in: guessers }})

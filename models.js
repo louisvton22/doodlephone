@@ -3,7 +3,7 @@ import mongoose from 'mongoose'
 console.log("connecting to mongoDB")
 
 await mongoose.connect("mongodb+srv://louis-ton:louis-ton@info441.xt4drit.mongodb.net/doodlephone?retryWrites=true&w=majority")
-
+mongoose.set("bufferCommands", false);
 console.log("successfully connected to mongoDB");
 
 let models = {}

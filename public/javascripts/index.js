@@ -12,9 +12,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // };
 })
 
-// window.addEventListener('beforeunload', async () => {
-//     await updateLobby();
-// })
+
 
 //establish webscoket connection between client and server
 async function establishConnection(e) {
@@ -28,7 +26,9 @@ async function establishConnection(e) {
         displayName = $("nameInput").value;
         const socketURL = "ws://localhost:3000/chatSocket?name="+$("nameInput").value
         websocket = new WebSocket(socketURL)
-
+        window.addEventListener('beforeunload', async () => {
+            websocket.close();
+        })
         await pushUpdatedLobby($("nameInput").value);
         websocket.onmessage = async (event) => {
             console.log("receiving chat message")
@@ -127,11 +127,18 @@ async function startGame(drawers) {
     let lobby = getElementByClass(".lobby");
     lobby.style.display = "none";
     let statusMessage= document.createElement("h3");
+
+  
     // open canvas for current drawer
     console.log(drawers);
     if (drawers.slice(0,2).includes(displayName)) {
     // remove lobby and add canvas
     statusMessage.innerText = "You're up to draw!";
+    let answer = await fetch("http://localhost:3000/prompt");
+    answer = await answer.text();
+    let el = document.createElement("h1");
+    el.innerText = "The prompt is: " + answer;
+    getElementByClass(".drawing-container").append(el)
     let canvas = document.createElement("canvas");
     canvas.id = "canvas";
     let submit = document.createElement("button");
@@ -282,6 +289,7 @@ async function guessPrompt(teamId) {
         fabricCanvas.renderAll();
     })
     let guessInput = document.createElement('input')
+    getElementByClass(".drawing-container h3").innerText = "Time to guess!"
     guessInput.placeholder = "Guess the prompt!"
     getElementByClass(".drawing-container").append(fabricCanvas, guessInput)
 
@@ -291,8 +299,20 @@ async function guessPrompt(teamId) {
         if (time == 0) {
             clearInterval(intervalId); 
             alert("Time's up!");
+            await revealPrompt();
         }
         time--;
     }, 1000);
 
+}
+
+async function revealPrompt() {
+    let answer = await fetch("http://localhost:3000/prompt");
+    answer = await answer.text();
+
+    let el = document.createElement("h1");
+
+    el.innerText = "The prompt was : " + answer;
+    
+    getElementByClass(".lobby-container").append(el);
 }

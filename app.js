@@ -5,7 +5,8 @@ import logger from 'morgan';
 import http from 'http';
 import usersRouter from './routes/users.js';
 import gameRouter from './routes/game.js';
-import canvasRouter from './routes/canvas.js'
+import promptRouter from './routes/prompts.js';
+import canvasRouter from './routes/canvas.js';
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch'
 
@@ -13,7 +14,16 @@ import enableWs from 'express-ws';
 import models  from './models.js';
 var app = express();
 
+const prompts = [
+  "Elephant",
+"Pizza",
+"Guitar",
+"Sunflower",
+"Mountain",
+"Unicorn"
+]
 
+const prompt = prompts[Math.floor(Math.random() * prompts.length)];
 app.server = http.createServer(app)
 enableWs(app,app.server);
 
@@ -104,6 +114,12 @@ app.use((req, res, next) => {
   next()
 })
 
+app.use((req, res, next) => {
+  req.prompt = prompt;
+  next()
+})
+
+app.use("/prompt", promptRouter)
 
 app.use("/game", gameRouter);
 app.use("/canvas", canvasRouter)

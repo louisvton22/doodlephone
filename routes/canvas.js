@@ -7,7 +7,7 @@ import { fabric } from 'fabric';
 router.get("/:teamId", async (req,res) => {
     // const canvas = new fabric.Canvas('canvas');
     try {
-    console.log(req.params.teamId)
+    //console.log(req.params.teamId)
     let team = await req.models.Team.findOne({_id: req.params.teamId})
     res.send(team.pictures[team.pictures.length - 1]);
     } catch(error) {
@@ -24,18 +24,18 @@ router.post('/', async (req, res) => {
         created_by: player._id,
         team: team._id
     })
-    console.log(req.body.team);
-    console.log("TEAM")
-    console.log(team);
-    console.log(team._id)
+    // console.log(req.body.team);
+    // console.log("TEAM")
+    // console.log(team);
+    // console.log(team._id)
     await picture.save()
 
     await req.models.Team.updateOne({_id: team._id},
         {$push : {pictures : req.body.currentPicture}})
     
     let nextPlayers = await req.models.Team.findOne({_id: team._id})
-    console.log("nextPlayers")
-    console.log(nextPlayers);
+    //console.log("nextPlayers")
+    //console.log(nextPlayers);
     nextPlayers = nextPlayers.players.filter((name) => { return name != req.body.created_by })
 
     if (nextPlayers.length == 1) {
