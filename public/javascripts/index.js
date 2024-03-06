@@ -233,7 +233,11 @@ async function postStartGameData() {
 
 async function endGame() {
     await fetch("http://localhost:3000/game/endGame");
-}3
+    let resultofGame = 1;
+    if (resultofGame) {
+        alert("Game over! Team 1 wins!");
+    }
+}
 
 async function submitDrawing(fabricCanvas) {
     let response = await fetch("http://localhost:3000/game")
