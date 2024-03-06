@@ -5,6 +5,7 @@ import logger from 'morgan';
 import http from 'http';
 import usersRouter from './routes/users.js';
 import gameRouter from './routes/game.js';
+import canvasRouter from './routes/canvas.js'
 import { fileURLToPath } from 'url';
 import fetch from 'node-fetch'
 
@@ -93,6 +94,7 @@ app.use((req, res, next) => {
 
 
 app.use("/game", gameRouter);
+app.use("/canvas", canvasRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

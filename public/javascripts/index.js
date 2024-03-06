@@ -47,6 +47,10 @@ async function establishConnection(e) {
                     console.log("starting game");
                     startGame();
                     break;
+                case('updatePic'):
+                    console.log("updating pic")
+
+                    break;
             }
         } 
     } catch (error) {
@@ -117,7 +121,7 @@ async function changeTeam() {
 }
 
 
-function startGame() {
+async function startGame() {
     //broadcast start game event to all players  
 
     // remove lobby and add canvas
@@ -126,8 +130,9 @@ function startGame() {
     let canvas = document.createElement("canvas");
     canvas.id = "canvas";
     let submit = document.createElement("button");
+    let timer = document.createElement("H3")
     submit.innerText="Finish";
-    getElementByClass(".lobby-container").append(canvas,submit);
+    getElementByClass(".lobby-container").append(timer,canvas,submit);
     const fabricCanvas = (window.canvas = new fabric.Canvas("canvas", {
         isDrawingMode: true
     }));
@@ -142,8 +147,35 @@ function startGame() {
         console.log("color changed");
     };
     $("clear-canvas").onclick = () => fabricCanvas.clear();
+
+    let time = 5
+    setInterval(async function() {
+        timer.innerHTML = time
+        time--
+        if (time == 0) {
+            let response = await fetch("http://localhost:3000/game")
+            console.log(JSON.stringify(response.json()))
+            await fetch("http://localhost:3000/canvas", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({"currentPicture": JSON.stringify(fabricCanvas)})
+            })
+
+        }
+    }, 1000)
     
 }
+
+
+// function startCountDown() {
+//     let time = 5
+//     setInterval(function() {
+//         timer.innerHTML = time
+//         time--
+//     }, 1000)
+// }
 
 //query selector shorthand
 function getElementByClass(className) {
@@ -189,4 +221,4 @@ async function postStartGameData() {
 
 async function endGame() {
     await fetch("http://localhost:3000/game/endGame");
-}
+}3

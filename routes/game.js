@@ -34,10 +34,6 @@ router.post("/", async (req,res) => {
         })
         game.save()
 
-
-
-
-
         res.json({"status": "success"})
     } catch(error) {
         console.log(error);
@@ -45,6 +41,16 @@ router.post("/", async (req,res) => {
     }
 })
 
+router.get('/', async (req, res) => {
+    let game = req.models.Game.find()
+
+    res.json({
+        "players": game.players,
+        "guessers": game.guessers,
+        "currentRound": game.currentRound,
+        "currentPicture": game.currentPicture
+    })
+})
 
 router.get("/endGame", async (req, res) => {
     await req.models.Game.deleteMany({});
