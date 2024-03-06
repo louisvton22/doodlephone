@@ -132,6 +132,20 @@ async function startGame() {
     let submit = document.createElement("button");
     let timer = document.createElement("H3")
     submit.innerText="Finish";
+    getElementByClass(".lobby-container").append(canvas,submit);
+
+    let time = 20;
+    const countdownEl = document.getElementById('countdown');
+    const intervalId = setInterval(() => {
+        time = time < 10 ? '0' + time : time;
+        countdownEl.innerHTML = `00:${time}`;
+        if (time == 0) {
+            clearInterval(intervalId); 
+            alert("Time's up!");
+        }
+        time--;
+    }, 1000);
+
     getElementByClass(".lobby-container").append(timer,canvas,submit);
     const fabricCanvas = (window.canvas = new fabric.Canvas("canvas", {
         isDrawingMode: true
