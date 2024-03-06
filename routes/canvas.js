@@ -10,5 +10,11 @@ router.get("/", (req,res) => {
     res.send(canvas)
 })
 
+router.post('/', async (req, res) => {
+    let picture = new req.models.Picture({
+        image: req.body.currentPicture
+    })
+    await picture.save()
+})
 
 export default router;
