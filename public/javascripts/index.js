@@ -228,6 +228,12 @@ async function postStartGameData() {
             players: team2Players
         }
     }
+    let loading = document.createElement("img");
+    loading.src = "../images/loading-gif.gif";
+    loading.alt = "Loading...";
+    loading.style.height = "50px";
+    loading.style.width = "50px";
+    $("actions").appendChild(loading)
     let drawers = await fetch("http://localhost:3000/game", {
         method: "POST",
         headers: {
@@ -235,6 +241,7 @@ async function postStartGameData() {
         },
         body: JSON.stringify(game)
     })
+    loading.remove();
     console.log("Posting Game :" + JSON.stringify(game));
     return drawers;
 

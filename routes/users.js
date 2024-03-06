@@ -7,7 +7,7 @@ let lastUpdate = new Date()
 let lobby = `<div class='team first'>
               <h2>Team A</h2>
               </div>
-              <div>
+              <div id="actions">
               <button onclick="changeTeam()">Switch Sides</button>
               <button id="start-game" onclick=broadcast("startGame")>Start Game</button>
               </div>
