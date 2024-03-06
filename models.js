@@ -28,14 +28,15 @@ const userSchema = new mongoose.Schema({
 models.User = mongoose.model("User", userSchema);
 
 const teamSchema = new mongoose.Schema({
-    pictures: [mongoose.Types.ObjectId],
+    pictures: [String],
+    players: [String],
     name: String
 })
 
 models.Team = mongoose.model("Team", teamSchema);
 
 const pictureSchema = new mongoose.Schema({
-    image: mongoose.Schema.Types.Mixed,
+    image: String,
     created_by: mongoose.Types.ObjectId,
     round: Number,
     team: mongoose.Types.ObjectId

@@ -65,7 +65,17 @@ app.ws('/chatSocket', (ws, req) => {
               }));
         })
         break;
-      
+      case('guessTime'):
+        Object.keys(allSockets).forEach(sCount => {
+          if (message.player == allSockets[sCount].name) {
+            allSockets[sCount].websocket.send(JSON.stringify(
+              {
+                event: "guessTime",
+                team: message.team
+              }
+            ))
+          }
+        })
     }
     
   })

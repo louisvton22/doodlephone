@@ -12,9 +12,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     // };
 })
 
-window.addEventListener('beforeunload', async () => {
-    await updateLobby();
-})
+// window.addEventListener('beforeunload', async () => {
+//     await updateLobby();
+// })
 
 //establish webscoket connection between client and server
 async function establishConnection(e) {
@@ -50,6 +50,8 @@ async function establishConnection(e) {
                     console.log("updating pic")
 
                     break;
+                case('guessTime'):
+                    await guessPrompt(jsonData.team);
             }
         } 
     } catch (error) {
@@ -123,7 +125,7 @@ async function changeTeam() {
 async function startGame(drawers) {
 
     let lobby = getElementByClass(".lobby");
-    lobby.remove();
+    lobby.style.display = "none";
     let statusMessage= document.createElement("h3");
     // open canvas for current drawer
     console.log(drawers);
@@ -161,7 +163,7 @@ async function startGame(drawers) {
         if (time == 0) {
             clearInterval(intervalId); 
             alert("Time's up!");
-            await submitDrawing(fabricCanvas);
+            await submitDrawing(fabricCanvas, $(displayName).parentElement.classList.contains("first") ? "Team A" : "Team B");
         }
         time--;
     }, 1000);
@@ -235,15 +237,62 @@ async function endGame() {
     await fetch("http://localhost:3000/game/endGame");
 }3
 
-async function submitDrawing(fabricCanvas) {
+async function submitDrawing(fabricCanvas, team) {
     let response = await fetch("http://localhost:3000/game")
             console.log(JSON.stringify(response.json()))
-            await fetch("http://localhost:3000/canvas", {
+    let nextPlayer = await fetch("http://localhost:3000/canvas", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({"currentPicture": JSON.stringify(fabricCanvas)})
+                body: JSON.stringify({"currentPicture": JSON.stringify(fabricCanvas), created_by: displayName, team: team})
             })
+
+    nextPlayer = await nextPlayer.json()
+    if (nextPlayer.status == "guessTime") {
+        await broadcast("guessTime", nextPlayer)
+    }
     
+}
+
+async function guessPrompt(teamId) {
+    let picture = await fetch("http://localhost:3000/canvas/"+teamId)
+    picture = await picture.text();
+
+    let canvas = document.createElement("canvas");
+    canvas.id = "canvas";
+    let submit = document.createElement("button");
+    let timer = document.createElement("H3")
+    submit.innerText="Finish";
+    getElementByClass(".lobby-container").append(canvas,submit);
+
+    let time = 20;
+    const countdownEl = document.getElementById('countdown');
+    
+    getElementByClass(".lobby-container").append(timer,canvas,submit);
+    const fabricCanvas = (window.canvas = new fabric.Canvas("canvas", {
+        isDrawingMode: false
+    }));
+    fabricCanvas.setDimensions({
+        width: 500,
+        height: 500
+    });
+
+    fabricCanvas.loadFromJSON(JSON.parse(picture), ()=> {
+        fabricCanvas.renderAll();
+    })
+    let guessInput = document.createElement('input')
+    guessInput.placeholder = "Guess the prompt!"
+    getElementByClass(".drawing-container").append(fabricCanvas, guessInput)
+
+    const intervalId = setInterval(async () => {
+        time = time < 10 ? '0' + time : time;
+        countdownEl.innerHTML = `00:${time}`;
+        if (time == 0) {
+            clearInterval(intervalId); 
+            alert("Time's up!");
+        }
+        time--;
+    }, 1000);
+
 }

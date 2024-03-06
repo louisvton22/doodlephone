@@ -10,11 +10,13 @@ router.post("/", async (req,res) => {
         await req.models.Picture.deleteMany({});
         Object.keys(req.body).forEach((team) => {
             let newTeam = new req.models.Team({
-                name: req.body[team].name
+                name: req.body[team].name,
+                players: req.body[team].players
             })
             newTeam.save();
         })
-        
+        console.log("PLAYERS")
+        console.log(req.body)
         let players = [...req.body.team1.players, ...req.body.team2.players]
         let guessers = [req.body.team1.players[Math.floor(Math.random() * req.body.team1.players.length)],
             req.body.team2.players[Math.floor(Math.random() * req.body.team2.players.length)]
@@ -40,6 +42,7 @@ router.post("/", async (req,res) => {
         let [team1, team2] = await req.models.Team.find()
         console.log("Team 1" + team1);
         console.log("Team 2" + team2);
+        setTimeout(() => {}, 2000)
         let drawers = await req.models.User.find({role:"drawer"});
         console.log("drawers " + drawers);
         let team1Drawers = drawers.filter((drawer) => req.body.team1.players.includes(drawer.name));
@@ -71,5 +74,7 @@ router.get("/endGame", async (req, res) => {
     await req.models.Team.deleteMany({});
     await req.models.Picture.deleteMany({});
 });
+
+
 
 export default router;
