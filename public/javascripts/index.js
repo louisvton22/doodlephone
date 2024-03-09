@@ -120,7 +120,7 @@ async function changeTeam() {
     
 }
 
-
+// Handles the start round for the drawers
 async function startGame(drawers) {
 
     let lobby = getElementByClass(".lobby");
@@ -203,7 +203,8 @@ async function broadcast(event, data) {
     // call function to save user, team, and game data to database
     
 }
-                                         
+                            
+// Generates a post call to the game and creates the database for game
 async function postStartGameData() {
     let team1 = getElementByClass(".team.first h2").innerText
     let team2 = getElementByClass(".team.second h2").innerText
@@ -240,8 +241,10 @@ async function postStartGameData() {
 
 async function endGame() {
     await fetch("http://localhost:3000/game/endGame");
-}3
+}
 
+
+// Post method for uploading the picture to the database
 async function submitDrawing(fabricCanvas, team) {
     let response = await fetch("http://localhost:3000/game")
             console.log(JSON.stringify(response.json()))
@@ -260,6 +263,7 @@ async function submitDrawing(fabricCanvas, team) {
     
 }
 
+// Creates the prompt for the game
 async function guessPrompt(teamId) {
     let picture = await fetch("http://localhost:3000/canvas/"+teamId)
     picture = await picture.text();
@@ -304,6 +308,7 @@ async function guessPrompt(teamId) {
 
 }
 
+// Reveals the prompt for the game
 async function revealPrompt() {
     let answer = await fetch("http://localhost:3000/prompt");
     answer = await answer.text();

@@ -78,3 +78,6 @@ This repeats for as many drawers there are in the game
 | "startGame"              | websockets         | Starts the game for each player and their client should change to the game                         |
 | "guess"                  | websockets               | Notifies guessers that it's their time to guess the picture their team drew                        |
 | "updateTeams"            | websockets         | Updates the lobby to reflect the latest team change by a player on all client screens.             |
+
+## Powerpoint Presentation
+https://docs.google.com/presentation/d/1J8ucjWOE_MPxE_u_XQQ0l-kLkbJAKcT1jL9vmt_ouns/edit#slide=id.p1
