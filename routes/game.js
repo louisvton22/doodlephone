@@ -17,39 +17,45 @@ router.post("/", async (req,res) => {
         })
         console.log("PLAYERS")
         console.log(req.body)
-        let players = [...req.body.team1.players, ...req.body.team2.players]
-        let guessers = [req.body.team1.players[Math.floor(Math.random() * req.body.team1.players.length)],
-            req.body.team2.players[Math.floor(Math.random() * req.body.team2.players.length)]
-        ]   
-        console.log(guessers)
-        players.forEach(async (player) => {
-            let newPlayer = new req.models.User({
-                name: player,
-                role: guessers.includes(player) ? "guesser" : "drawer"
+        let a = [...req.body.team1.players]
+        let b = [...req.body.team2.players]
+        if (a.length > 1 && b.length > 1) {
+            let players = [...req.body.team1.players, ...req.body.team2.players]
+            let guessers = [req.body.team1.players[Math.floor(Math.random() * req.body.team1.players.length)],
+                req.body.team2.players[Math.floor(Math.random() * req.body.team2.players.length)]
+            ]   
+            console.log(guessers)
+            players.forEach(async (player) => {
+                let newPlayer = new req.models.User({
+                    name: player,
+                    role: guessers.includes(player) ? "guesser" : "drawer"
+                })
+                newPlayer.save();
             })
-            newPlayer.save();
-        })
-        let playersObjectsIds = await req.models.User.find({ name: { $in : players }})
-        let guesserIds = await req.models.User.find({ name: { $in: guessers }})
-        let game = new req.models.Game({
-            players : playersObjectsIds.map((player) => player._id),
-            guessers: guesserIds.map((guesser) => guesser._id),
-            currentRound: 1,
-            currentPicture: []
+            let playersObjectsIds = await req.models.User.find({ name: { $in : players }})
+            let guesserIds = await req.models.User.find({ name: { $in: guessers }})
+            let game = new req.models.Game({
+                players : playersObjectsIds.map((player) => player._id),
+                guessers: guesserIds.map((guesser) => guesser._id),
+                currentRound: 1,
+                currentPicture: []
 
-        })
-        game.save()
-        let [team1, team2] = await req.models.Team.find()
-        console.log("Team 1" + team1);
-        console.log("Team 2" + team2);
-        setTimeout(async () => {
-        let drawers = await req.models.User.find({role:"drawer"});
-        console.log("drawers " + drawers);
-        let team1Drawers = drawers.filter((drawer) => req.body.team1.players.includes(drawer.name));
-        let team2Drawers = drawers.filter((drawer) => req.body.team2.players.includes(drawer.name));
+            })
+            game.save()
+            let [team1, team2] = await req.models.Team.find()
+            console.log("Team 1" + team1);
+            console.log("Team 2" + team2);
+            setTimeout(async () => {
+            let drawers = await req.models.User.find({role:"drawer"});
+            console.log("drawers " + drawers);
+            let team1Drawers = drawers.filter((drawer) => req.body.team1.players.includes(drawer.name));
+            let team2Drawers = drawers.filter((drawer) => req.body.team2.players.includes(drawer.name));
 
-        res.json({"status": "success", team1:team1Drawers, team2:team2Drawers});
-        }, 2000)
+            res.json({"status": "success", team1:team1Drawers, team2:team2Drawers});
+            }, 2000)
+        } else {
+            res.json({"status": "error", "error": "Not enough players"})
+        }
         
     } catch(error) {
         console.log(error);

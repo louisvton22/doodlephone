@@ -80,14 +80,25 @@ app.ws('/chatSocket', (ws, req) => {
         break;
       case('startGame'):
         console.log(message);
-        Object.keys(allSockets).forEach(sCount => {
-          // message structure: {event:"updateLobby", data: HTMLElement}
+        try {
+          Object.keys(allSockets).forEach(sCount => {
+            // message structure: {event:"updateLobby", data: HTMLElement}
+              allSockets[sCount].websocket.send(JSON.stringify(
+                {
+                  event: "startGame",
+                  drawers: [...message.drawers.team1, ...message.drawers.team2]
+                }));
+          })
+        } catch (error) {
+          console.log("startgame error", error)
+          Object.keys(allSockets).forEach(sCount => {
+            // message structure: {event:"updateLobby", data: HTMLElement}
             allSockets[sCount].websocket.send(JSON.stringify(
               {
-                event: "startGame",
-                drawers: [...message.drawers.team1, ...message.drawers.team2]
+                event: "error"
               }));
-        })
+          })
+        }
         break;
       case('guessTime'):
         Object.keys(allSockets).forEach(sCount => {

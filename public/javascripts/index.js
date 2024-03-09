@@ -46,12 +46,11 @@ async function establishConnection(e) {
                     console.log("starting game");
                     startGame(jsonData.drawers.map((player) => player.name));
                     break;
-                case('updatePic'):
-                    console.log("updating pic")
-
-                    break;
                 case('guessTime'):
                     await guessPrompt(jsonData.team);
+                    break;
+                case('error'):
+                    alert("Please have at least 2 players on both team")
             }
         } 
     } catch (error) {
@@ -184,14 +183,6 @@ async function startGame(drawers) {
     
 }
 
-
-// function startCountDown() {
-//     let time = 5
-//     setInterval(function() {
-//         timer.innerHTML = time
-//         time--
-//     }, 1000)
-// }
 
 //query selector shorthand
 function getElementByClass(className) {
